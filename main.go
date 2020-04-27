@@ -31,48 +31,17 @@ type User struct {
 
 
 func main() {
-	var data JsonStructure
-	
-	file, err := ioutil.ReadFile("./users.json")
+	data, err := readjson()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := json.Unmarshal(file, &data);  err!=nil {
-		log.Fatal(err)
-	}
-//connect to db
 	db,err := dbconnection()
 	if err !=nil {
 		log.Fatal(err)
 	}
-	for _,actor := range data.Actors{
-		if actor.Alive{
-			fmt.Println(actor.FirstName, actor.LastName)
-			query := "insert into user (first_name, last_name) values (?,?)"
-			_, err:= db.Exec(query, actor.FirstName, actor.LastName)
-			if err !=nil{
-				fmt.Println("unable to insert because", err)
-			}
-		}
-	}
-// reading from the database
-	var users []User
-	query:= "select distinct (first_name), last_name from user order by first_name asc"
-	rows, err := db.Query(query)
-	if err != nil{
-		log.Fatal(err)
-	}
-
-	for rows.Next(){
-		var user User
-		if err := rows.Scan(&user.FirstName, &user.LastName); err != nil{
-			fmt.Println("Unable to read data", err)
-			continue
-		}
-		users= append(users, user)
-	}
-	fmt.Println(users)
+	inserttodb(db, data)
+	readfromdb(db)
 }
 	func dbconnection() (connection *sql.DB, err error) {
 		dburi:= "root:daddy@tcp(localhost:3306)/assignment"
@@ -84,4 +53,50 @@ func main() {
 			return
 		}
 		return
+	}
+
+	func readjson () (data JsonStructure, err error){
+		file, err := ioutil.ReadFile("./users.json")
+		if err != nil {
+			return
+		}
+
+		if err := json.Unmarshal(file, &data);  err!=nil {
+			return
+		}
+		return
+	}
+
+	func inserttodb (dbconnection *sql.DB, data JsonStructure) {
+		for _,actor := range data.Actors{
+			if actor.Alive{
+				fmt.Println(actor.FirstName, actor.LastName)
+				query := "insert into user (first_name, last_name) values (?,?)"
+				_, err:= dbconnection.Exec(query, actor.FirstName, actor.LastName)
+				if err !=nil{
+					fmt.Println("unable to insert because", err)
+				}
+			}
+		}
+	}
+
+
+	func readfromdb (db *sql.DB) {
+		// reading from the database
+		var users []User
+		query:= "select distinct (first_name), last_name from user order by first_name asc"
+		rows, err := db.Query(query)
+		if err != nil{
+			log.Fatal(err)
+		}
+
+		for rows.Next(){
+			var user User
+			if err := rows.Scan(&user.FirstName, &user.LastName); err != nil{
+				fmt.Println("Unable to read data", err)
+				continue
+			}
+			users= append(users, user)
+		}
+		fmt.Println(users)
 	}
