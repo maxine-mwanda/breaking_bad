@@ -1,0 +1,34 @@
+{ 
+  "show": "Breaking Bad",
+  "director": "Vince Gilligan",
+  "actors": [
+    {
+      "firstName" : "Giancarlo",
+      "lastName": "Esposito",
+      "character": "Gus Fring",
+      "seasons": 4,
+      "alive": false
+    },
+    {
+      "firstName": "Anna",
+      "lastName": "Gunn",
+      "character": "Skyler White",
+      "seasons": 5,
+      "alive": true
+    },
+    {
+      "firstName": "Bryan",
+      "lastName": "Cranston",
+      "character": "Walter White",
+      "seasons": 5,
+      "alive": false
+    },
+    {
+      "firstName": "Aaron",
+      "lastName": "Paul",
+      "character": "Jessie Pinkman",
+      "seasons": 5,
+      "alive": true
+    }
+  ]
+}
